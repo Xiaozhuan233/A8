@@ -77,13 +77,19 @@ class SpritePreview(QMainWindow):
 
 
  def update_label(self):
-
+     if self.frames and self.current_frame < len(self.frames):
+         self.image_label.setPixmap(self.frames[self.current_frame])
 
     def next_frame(self):
-
+        self.current_frame = (self.current_frame + 1) % self.num_frames
+        self.update_label()
 
     def on_fps_changed(self, value):
-
+        self.current_fps = value
+        self.fps_value_label.setText(str(self.current_fps))
+        if self.is_animating:
+            delay_ms = int(1000 / self.current_fps)
+            self.timer.setInterval(delay_ms)
 
     def toggle_animation(self):
 
