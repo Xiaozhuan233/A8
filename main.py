@@ -16,49 +16,86 @@ def load_sprite(sprite_folder_name, number_of_frames):
     return frames
 
 class SpritePreview(QMainWindow):
-
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Sprite Animation Preview")
-        # This loads the provided sprite and would need to be changed for your own.
-        self.num_frames = 21
-        self.frames = load_sprite('spriteImages',self.num_frames)
 
-        # Animation state
+        self.num_frames = 21
+        self.frames = load_sprite('spriteImages', self.num_frames)
+
         self.current_frame = 0
-        self.timer = QTimer()
+        self.timer = QTimer(self)
         self.timer.timeout.connect(self.next_frame)
         self.is_animating = False
+        self.current_fps = 30
 
-        # Current FPS (default 10)
-        self.current_fps = 10
-
-        # Make the GUI in the setupUI method
         self.setupUI()
 
+        self.update_label()
 
     def setupUI(self):
-        # An application needs a central widget - often a QFrame
-        frame = QFrame()
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+        main_layout = QVBoxLayout(central_widget)
 
-        # Add a lot of code here to make layouts, more QFrame or QWidgets, and
-        # the other components of the program.
-        # Create needed connections between the UI components and slot methods
-        # you define in this class.
+        self.image_label = QLabel()
+        self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.image_label.setMinimumSize(200, 200)
+        self.image_label.setScaledContents(True)
+        main_layout.addWidget(self.image_label)
 
-        self.setCentralWidget(frame)
+        slider_layout = QHBoxLayout()
+        fps_text_label = QLabel("Frames per second:")
+        self.fps_value_label = QLabel(str(self.current_fps))
+        slider_layout.addWidget(fps_text_label)
+        slider_layout.addWidget(self.fps_value_label)
+        slider_layout.addStretch()
+        main_layout.addLayout(slider_layout)
+
+        self.fps_slider = QSlider(Qt.Orientation.Horizontal)
+        self.fps_slider.setRange(1, 100)
+        self.fps_slider.setValue(self.current_fps)
+        self.fps_slider.setTickPosition(QSlider.TickPosition.TicksBelow)
+        self.fps_slider.setTickInterval(10)
+        self.fps_slider.valueChanged.connect(self.on_fps_changed)
+        main_layout.addWidget(self.fps_slider)
+
+        self.start_stop_button = QPushButton("Start")
+        self.start_stop_button.clicked.connect(self.toggle_animation)
+        main_layout.addWidget(self.start_stop_button)
+
+        menubar = self.menuBar()
+        control_menu = menubar.addMenu("Control")
+
+        pause_action = QAction("Pause", self)
+        pause_action.triggered.connect(self.pause_animation)
+        control_menu.addAction(pause_action)
+
+        exit_action = QAction("Exit", self)
+        exit_action.triggered.connect(self.close)
+        control_menu.addAction(exit_action)
 
 
-    # You will need methods in the class to act as slots to connect to signals
+ def update_label(self):
+
+
+    def next_frame(self):
+
+
+    def on_fps_changed(self, value):
+
+
+    def toggle_animation(self):
+
+
+    def pause_animation(self):
 
 
 def main():
-    app = QApplication([])
-    # Create our custom application
+    app = QApplication(sys.argv)
     window = SpritePreview()
-    # And show it
     window.show()
-    app.exec()
+    sys.exit(app.exec())
 
 
 if __name__ == "__main__":
