@@ -18,7 +18,7 @@ def load_sprite(sprite_folder_name, number_of_frames):
 class SpritePreview(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Sprite Animation Preview")
+        self.setWindowTitle("A8")
 
         self.num_frames = 21
         self.frames = load_sprite('spriteImages', self.num_frames)
@@ -76,7 +76,7 @@ class SpritePreview(QMainWindow):
         control_menu.addAction(exit_action)
 
 
- def update_label(self):
+    def update_label(self):
      if self.frames and self.current_frame < len(self.frames):
          self.image_label.setPixmap(self.frames[self.current_frame])
 
@@ -92,10 +92,21 @@ class SpritePreview(QMainWindow):
             self.timer.setInterval(delay_ms)
 
     def toggle_animation(self):
-
+        if self.is_animating:
+            self.timer.stop()
+            self.is_animating = False
+            self.start_stop_button.setText("Start")
+        else:
+            delay_ms = int(1000 / self.current_fps)
+            self.timer.start(delay_ms)
+            self.is_animating = True
+            self.start_stop_button.setText("Stop")
 
     def pause_animation(self):
-
+        if self.is_animating:
+            self.timer.stop()
+            self.is_animating = False
+            self.start_stop_button.setText("Start")
 
 def main():
     app = QApplication(sys.argv)
